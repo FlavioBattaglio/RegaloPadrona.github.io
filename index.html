@@ -1,16 +1,99 @@
-<form
-  action="https://formspree.io/f/xrezngow"
-  method="POST"
->
-  <div>ciao</div>
-  <label>
-    Your email:
-    <input type="email" name="email">
-  </label>
-  <label>
-    Your message:
-    <textarea name="message"></textarea>
-  </label>
-  <!-- your other form fields go here -->
-  <button type="submit">Send</button>
+ 
+ <!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Regalo!</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        select { width: 100%; margin-top: 10px; }
+        .step { display: none; }
+        .step.active { display: block; }
+    </style>
+</head>
+<body>
+
+<h2>🎄🎅Regalo Padronesco🎅🎄</h2>
+
+<form id="form">
+
+    <div class="step active">
+        <select name="opzione_1" required>
+            <option value="">Scegli il mese in cui sei libera</option>
+			<option value="Marzo">Marzo</option>
+			<option value="april">Aprile</option>
+			<option value="Maggio">Maggio</option>
+			<option value="Giugno">Giugno</option>
+        </select>
+    </div>
+
+    <div class="step">
+        <select name="opzione_2" required>
+            <option value="">Quanti giorni </option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+			<option value="5">5</option>
+        </select>
+    </div>
+
+    <div class="step">
+        <select name="opzione_3" required>
+            <option value="">Pronta a Partire?</option>
+            <option value="si">si</option>
+            <option value="no" disabled>no</option>
+ 
+        </select>
+    </div>
+
+    
+
 </form>
+
+<p id="status"></p>
+
+<script>
+const steps = document.querySelectorAll(".step");
+const status = document.getElementById("status");
+
+steps.forEach((step, index) => {
+    const select = step.querySelector("select");
+
+    select.addEventListener("change", async () => {
+        select.disabled = true;
+
+        if (steps[index + 1]) {
+            steps[index + 1].classList.add("active");
+        } else {
+            status.innerText = "Invio in corso...";
+
+            const data = {
+                opzione_1: document.querySelector('[name="opzione_1"]').value,
+                opzione_2: document.querySelector('[name="opzione_2"]').value,
+                opzione_3: document.querySelector('[name="opzione_3"]').value 
+            };
+
+            fetch("https://formspree.io/f/xrezngow", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    status.innerText = "Preparati per un viaggio a Praga 🏰!🎅Buon Natale Padrona!🎅";
+                } else {
+                    status.innerText = "Errore  ❌";
+                }
+            })
+            .catch(() => {
+                status.innerText = "Errore di rete ❌";
+            });
+        }
+    });
+});
+</script>
+
+</body>
+</html>
