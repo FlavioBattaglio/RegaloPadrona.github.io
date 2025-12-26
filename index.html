@@ -3,22 +3,39 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Regalo!</title>
+    <title>Invio automatico JSON</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <style>
-        body { font-family: Arial; padding: 20px; }
-        select { width: 100%; margin-top: 10px; }
+        body { font-family: Arial; padding: 20px; background-image: url("https://img.freepik.com/free-photo/still-life-christmas-decoration-with-copy-space_23-2151868677.jpg?semt=ais_hybrid&w=740&q=80") ;  background-size: cover;}
+        
         .step { display: none; }
         .step.active { display: block; }
+		  
+		   #snow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* non blocca click */
+    z-index: 9999;
+  }
+		  
     </style>
 </head>
-<body>
+<body >
+<canvas id="snow"></canvas>
+<div class="d-flex justify-content-center  "> 
+<h2 class="  text-center mt-5 bg-white py-2 px-2 rounded-pill" >🎄🎅Regalo Padronesco🎅🎄</h2>
+</div>
 
-<h2>🎄🎅Regalo Padronesco🎅🎄</h2>
+<form id="form"    >
 
-<form id="form">
-
-    <div class="step active">
-        <select name="opzione_1" required>
+ <div class="form-group mt-4">
+ 
+    <div class="step active ">
+        <select class="form-control-lg w-100" name="opzione_1" required>
             <option value="">Scegli il mese in cui sei libera</option>
 			<option value="Marzo">Marzo</option>
 			<option value="april">Aprile</option>
@@ -26,25 +43,27 @@
 			<option value="Giugno">Giugno</option>
         </select>
     </div>
-
-    <div class="step">
-        <select name="opzione_2" required>
+ 
+    <div class="step  form-select ">
+        <select  class="form-control w-100"  name="opzione_2" required>
             <option value="">Quanti giorni </option>
             <option value="3">3</option>
             <option value="4">4</option>
 			<option value="5">5</option>
         </select>
     </div>
-
-    <div class="step">
-        <select name="opzione_3" required>
+ 
+ 
+    <div class="step  form-select">
+        <select class="form-control w-100"  name="opzione_3" required>
             <option value="">Pronta a Partire?</option>
             <option value="si">si</option>
             <option value="no" disabled>no</option>
  
         </select>
     </div>
-
+ 
+</div>
     
 
 </form>
@@ -83,6 +102,14 @@ steps.forEach((step, index) => {
             .then(response => {
                 if (response.ok) {
                     status.innerText = "Preparati per un viaggio a Praga 🏰!🎅Buon Natale Padrona!🎅";
+					status.classList.add(
+					  "text-center",
+					  "mt-5",
+					  "bg-white",
+					  "py-2",
+					  "px-2",
+					  "rounded-pill"
+					);
                 } else {
                     status.innerText = "Errore  ❌";
                 }
@@ -93,7 +120,66 @@ steps.forEach((step, index) => {
         }
     });
 });
+
+
+  const canvas = document.getElementById("snow");
+  const ctx = canvas.getContext("2d");
+
+  let width, height;
+  let snowflakes = [];
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener("resize", resize);
+  resize();
+
+  function createSnowflakes(count = 150) {
+    snowflakes = [];
+    for (let i = 0; i < count; i++) {
+      snowflakes.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 3 + 1,
+        d: Math.random() + 1
+      });
+    }
+  }
+
+  function drawSnow() {
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+
+    for (let flake of snowflakes) {
+      ctx.moveTo(flake.x, flake.y);
+      ctx.arc(flake.x, flake.y, flake.r, 0, Math.PI * 2);
+    }
+
+    ctx.fill();
+    moveSnow();
+  }
+
+  let angle = 0;
+  function moveSnow() {
+    angle += 0.01;
+    for (let flake of snowflakes) {
+      flake.y += Math.pow(flake.d, 2) + 1;
+      flake.x += Math.sin(angle) * 0.5;
+
+      if (flake.y > height) {
+        flake.y = -5;
+        flake.x = Math.random() * width;
+      }
+    }
+  }
+
+  createSnowflakes();
+  setInterval(drawSnow, 25);
 </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 
 </body>
 </html>
